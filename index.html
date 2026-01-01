@@ -123,142 +123,148 @@ h1{
   </div>
 </details>
 
-<!-- ================= CHA2DS2-VASc SCORE ================= -->
+<!-- ================= CHA2DS2-VASc SCORE (AUTO) ================= -->
 
 <details class="tool" data-system="cardio">
   <summary>
     <div>
       <div class="tool-title">CHA₂DS₂-VASc Score</div>
-      <div class="tool-sub">Stroke risk & anticoagulation in atrial fibrillation</div>
+      <div class="tool-sub">Auto-calculated stroke risk in AF</div>
     </div>
     <div>▾</div>
   </summary>
 
   <div class="tool-body">
 
-    <!-- RISK FACTORS -->
     <div class="step">
       <div class="step-title">Select risk factors</div>
 
       <div class="options" style="flex-wrap:wrap">
-        <button onclick="toggleCHA(this,'hf',1)">Heart failure</button>
-        <button onclick="toggleCHA(this,'htn',1)">Hypertension</button>
 
-        <!-- AGE (mutually exclusive) -->
-        <button onclick="setAge(this,2)">Age ≥ 75 years</button>
-        <button onclick="setAge(this,1)">Age 65–74 years</button>
+        <!-- CORE -->
+        <button onclick="cha.toggle(this,'hf',1)">Heart failure</button>
+        <button onclick="cha.toggle(this,'htn',1)">Hypertension</button>
+        <button onclick="cha.toggle(this,'dm',1)">Diabetes</button>
+        <button onclick="cha.toggle(this,'vasc',1)">Vascular disease</button>
+        <button onclick="cha.toggle(this,'stroke',2)">Stroke / TIA / TE</button>
 
-        <button onclick="toggleCHA(this,'dm',1)">Diabetes</button>
-        <button onclick="toggleCHA(this,'stroke',2)">Stroke / TIA / TE</button>
-        <button onclick="toggleCHA(this,'vasc',1)">Vascular disease</button>
+        <!-- AGE (exclusive) -->
+        <button onclick="cha.setAge(this,2)">Age ≥ 75 years</button>
+        <button onclick="cha.setAge(this,1)">Age 65–74 years</button>
 
         <!-- SEX -->
-        <button onclick="setSex(this,'female')">Female sex</button>
-      </div>
+        <button onclick="cha.toggleSex(this)">Female sex</button>
 
-      <button onclick="calculateCHA2DS2()" class="primary-btn">
-        Calculate CHA₂DS₂-VASc
-      </button>
+      </div>
     </div>
 
     <!-- RESULT -->
-    <div id="cha2ds2-result" class="result hidden"></div>
+    <div id="cha-result" class="result hidden"></div>
 
     <!-- INTERPRETATION -->
-    <div class="monitor">
-      <b>Guideline interpretation:</b><br>
-      • <b>Men:</b> 0 → No OAC | 1 → Consider | ≥2 → Start OAC<br>
-      • <b>Women:</b> 1 (sex alone) → No OAC | 2 → Consider | ≥3 → Start OAC
-    </div>
+    <div id="cha-info" class="monitor hidden"></div>
 
   </div>
 </details>
 
 <script>
-const chaState = {
+const cha = {
   score: 0,
   age: 0,
   female: false,
-  items: {}
-};
+  items: {},
 
-/* Toggle simple risk factors */
-function toggleCHA(btn, key, val){
-  if(btn.classList.contains('selected')){
-    btn.classList.remove('selected');
-    chaState.score -= val;
-    delete chaState.items[key];
-  } else {
-    btn.classList.add('selected');
-    chaState.score += val;
-    chaState.items[key] = val;
-  }
-}
-
-/* AGE: mutually exclusive */
-function setAge(btn, val){
-  document.querySelectorAll('[onclick^="setAge"]').forEach(b=>{
-    b.classList.remove('selected');
-  });
-
-  chaState.score -= chaState.age;
-  chaState.age = val;
-  chaState.score += val;
-
-  btn.classList.add('selected');
-}
-
-/* SEX */
-function setSex(btn, sex){
-  if(sex !== 'female') return;
-
-  if(btn.classList.contains('selected')){
-    btn.classList.remove('selected');
-    chaState.female = false;
-    chaState.score -= 1;
-  } else {
-    btn.classList.add('selected');
-    chaState.female = true;
-    chaState.score += 1;
-  }
-}
-
-/* FINAL CALCULATION */
-function calculateCHA2DS2(){
-  const r = document.getElementById('cha2ds2-result');
-  let advice = '';
-  let cls = 'info';
-
-  const total = chaState.score;
-
-  if(chaState.female){
-    if(total === 1){
-      advice = 'Female sex alone → <b>No anticoagulation</b>';
-      cls = 'info';
-    } else if(total === 2){
-      advice = 'Consider anticoagulation based on clinical context.';
-      cls = 'warn';
-    } else if(total >= 3){
-      advice = '<b>Start oral anticoagulation</b>';
-      cls = 'success';
-    }
-  } else {
-    if(total === 0){
-      advice = 'No anticoagulation required.';
-      cls = 'info';
-    } else if(total === 1){
-      advice = 'Consider anticoagulation.';
-      cls = 'warn';
+  toggle(btn, key, val){
+    if(btn.classList.contains('selected')){
+      btn.classList.remove('selected');
+      this.score -= val;
+      delete this.items[key];
     } else {
-      advice = '<b>Start oral anticoagulation</b>';
-      cls = 'success';
+      btn.classList.add('selected');
+      this.score += val;
+      this.items[key] = val;
     }
-  }
+    this.update();
+  },
 
-  r.className = 'result ' + cls;
-  r.innerHTML = `<b>CHA₂DS₂-VASc Score = ${total}</b><br>${advice}`;
-  r.classList.remove('hidden');
-}
+  setAge(btn, val){
+    // remove both age selections
+    document.querySelectorAll('[onclick^="cha.setAge"]').forEach(b=>{
+      b.classList.remove('selected');
+    });
+
+    this.score -= this.age;
+    this.age = val;
+    this.score += val;
+
+    btn.classList.add('selected');
+    this.update();
+  },
+
+  toggleSex(btn){
+    if(btn.classList.contains('selected')){
+      btn.classList.remove('selected');
+      this.female = false;
+      this.score -= 1;
+    } else {
+      btn.classList.add('selected');
+      this.female = true;
+      this.score += 1;
+    }
+    this.update();
+  },
+
+  update(){
+    const r = document.getElementById('cha-result');
+    const info = document.getElementById('cha-info');
+    const s = this.score;
+
+    if(s < 0){
+      r.classList.add('hidden');
+      info.classList.add('hidden');
+      return;
+    }
+
+    let msg = '';
+    let cls = 'info';
+
+    if(this.female){
+      if(s === 1){
+        msg = 'Female sex alone → <b>No anticoagulation</b>';
+        cls = 'info';
+      } else if(s === 2){
+        msg = 'Consider anticoagulation based on clinical context.';
+        cls = 'warn';
+      } else if(s >= 3){
+        msg = '<b>Start oral anticoagulation</b>';
+        cls = 'success';
+      }
+    } else {
+      if(s === 0){
+        msg = 'No anticoagulation required.';
+        cls = 'info';
+      } else if(s === 1){
+        msg = 'Consider anticoagulation.';
+        cls = 'warn';
+      } else {
+        msg = '<b>Start oral anticoagulation</b>';
+        cls = 'success';
+      }
+    }
+
+    r.className = 'result ' + cls;
+    r.innerHTML = `<strong>CHA₂DS₂-VASc = ${s}</strong><br>${msg}`;
+    r.classList.remove('hidden');
+
+    info.innerHTML = `
+      <b>Guideline note:</b><br>
+      • Men: ≥2 → OAC indicated<br>
+      • Women: ≥3 → OAC indicated<br>
+      • Female sex alone is <b>not</b> an indication
+    `;
+    info.classList.remove('hidden');
+  }
+};
 </script>
 
 <!-- =================================================== -->
