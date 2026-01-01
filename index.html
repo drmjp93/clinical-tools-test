@@ -123,6 +123,57 @@ h1{
   </div>
 </details>
 
+<!-- ================= CHA2DS2-VASc SCORE ================= -->
+
+<details class="tool" data-system="cardio">
+  <summary>
+    <div>
+      <div class="tool-title">CHA₂DS₂-VASc Score</div>
+      <div class="tool-sub">Stroke risk & anticoagulation in atrial fibrillation</div>
+    </div>
+    <div>▾</div>
+  </summary>
+
+  <div class="tool-body">
+
+    <!-- RISK FACTORS -->
+    <div class="step">
+      <div class="step-title">Select risk factors</div>
+
+      <div class="options" style="flex-wrap:wrap">
+        <button onclick="toggleCHA(this,'hf',1)">Heart failure</button>
+        <button onclick="toggleCHA(this,'htn',1)">Hypertension</button>
+
+        <!-- AGE (mutually exclusive) -->
+        <button onclick="setAge(this,2)">Age ≥ 75 years</button>
+        <button onclick="setAge(this,1)">Age 65–74 years</button>
+
+        <button onclick="toggleCHA(this,'dm',1)">Diabetes</button>
+        <button onclick="toggleCHA(this,'stroke',2)">Stroke / TIA / TE</button>
+        <button onclick="toggleCHA(this,'vasc',1)">Vascular disease</button>
+
+        <!-- SEX -->
+        <button onclick="setSex(this,'female')">Female sex</button>
+      </div>
+
+      <button onclick="calculateCHA2DS2()" class="primary-btn">
+        Calculate CHA₂DS₂-VASc
+      </button>
+    </div>
+
+    <!-- RESULT -->
+    <div id="cha2ds2-result" class="result hidden"></div>
+
+    <!-- INTERPRETATION -->
+    <div class="monitor">
+      <b>Guideline interpretation:</b><br>
+      • <b>Men:</b> 0 → No OAC | 1 → Consider | ≥2 → Start OAC<br>
+      • <b>Women:</b> 1 (sex alone) → No OAC | 2 → Consider | ≥3 → Start OAC
+    </div>
+
+  </div>
+</details>
+
 <!-- =================================================== -->
 <!-- PASTE / TEST NEW TOOLS ABOVE THIS LINE ONLY -->
 <!-- =================================================== -->
