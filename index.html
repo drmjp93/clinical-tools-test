@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Clinical Tools – Test Sandbox</title>
+
+<!-- ===== MINIMAL THEME ===== -->
+<style>
+:root{
+  --bg:#0f1113;
+  --card:#16191d;
+  --inner:#0b0d10;
+  --border:#262a30;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --accent:#3b82f6;
+  --success:#064e3b;
+  --warn:#78350f;
+  --info:#1e3a8a;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto;
+  background:var(--bg);
+  color:var(--text);
+}
+
+main{
+  max-width:1000px;
+  margin:24px auto;
+  padding:16px;
+}
+
+h1{
+  font-size:1.6rem;
+  margin-bottom:6px;
+}
+
+.sub{
+  color:var(--muted);
+  font-size:.9rem;
+  margin-bottom:20px;
+}
+
+/* ===== TOOL CARD ===== */
+.tool{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  margin-bottom:14px;
+  overflow:hidden;
+}
+
+.tool summary{
+  list-style:none;
+  padding:16px;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+}
+
+.tool summary::-webkit-details-marker{display:none}
+
+.tool-title{font-weight:600}
+.tool-sub{font-size:.8rem;color:var(--muted)}
+
+.tool-body{
+  padding:16px;
+  border-top:1px solid var(--border);
+}
+
+/* ===== UTIL ===== */
+.hidden{display:none}
+
+/* ===== BUTTON ===== */
+.primary-btn{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:none;
+  background:var(--accent);
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.primary-btn:hover{opacity:.9}
+</style>
+
+</head>
+
+<body>
+
+<main>
+
+<h1>Clinical Tools – Test</h1>
+<div class="sub">
+  Isolated sandbox for testing new tools safely
+</div>
+
+<!-- =================================================== -->
+<!-- PASTE / TEST NEW TOOLS BELOW THIS LINE ONLY -->
+<!-- =================================================== -->
+
+<!-- Example placeholder tool -->
+<details class="tool">
+  <summary>
+    <div>
+      <div class="tool-title">Test Tool</div>
+      <div class="tool-sub">Temporary sandbox</div>
+    </div>
+    <div>▾</div>
+  </summary>
+
+  <div class="tool-body">
+    <button class="primary-btn">Dummy Action</button>
+  </div>
+</details>
+
+<!-- =================================================== -->
+<!-- PASTE / TEST NEW TOOLS ABOVE THIS LINE ONLY -->
+<!-- =================================================== -->
+
+</main>
+
+<!-- ===== TOOL-SPECIFIC JS GOES BELOW ===== -->
+<script>
+// write JS for test tools here
+</script>
+
+</body>
+</html>
